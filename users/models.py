@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from .user_manager.custom_manager import CustomUserManager
 from django.db import models
 from django.db import models
+from django.core.exceptions import ValidationError
 import uuid
 
 
@@ -29,6 +30,12 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     class Meta:
         db_table = 'tb_users'
         default_permissions = ()
+        
+    def clean(self):
+        # Validate gender if it's set and not one of the allowed choices
+        if self.gender not in dict(self.genders):
+            raise ValidationError(f"Invalid gender: {self.gender}. Must be one of: {dict(self.genders)}.")
+        super().clean()  # Call the parent class's clean method
 
     def __str__(self):
         return self.email
