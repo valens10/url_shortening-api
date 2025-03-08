@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
+    'drf_yasg',
     'users',
     'shorten'
 ]
@@ -47,6 +49,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -70,6 +73,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'url_shortener.wsgi.application'
 AUTH_USER_MODEL = 'users.CustomUser'
@@ -112,6 +116,15 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ]
 }
+
+# Cors settings
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:4200",  # Angular development server
+]
+
+# Optionally, allow all origins (use with caution in production)
+CORS_ALLOW_ALL_ORIGINS = True
+
 
 
 # Internationalization
