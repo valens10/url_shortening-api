@@ -38,6 +38,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include("users.urls")),
     path('api/', include("shorten.urls")),
-    
+    path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('doc/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 ]

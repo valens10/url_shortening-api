@@ -5,8 +5,8 @@ import random, string
 
 class URL(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='urls')
-    short_code = models.CharField(max_length=10, unique=True, blank=True)
-    long_url = models.URLField()
+    short_code = models.TextField(unique=True, blank=True)
+    long_url = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     clicks = models.PositiveIntegerField(default=0)
     clicked_date = models.DateTimeField(null=True, blank=True)

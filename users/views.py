@@ -45,7 +45,8 @@ class UserRegisterViewset(GenericAPIView, CreateModelMixin):
                 {"status": "error", "message": "Account registration failed. Please correct the errors and try again.", "errors": serializer.errors},
                 status=status.HTTP_400_BAD_REQUEST
             )
-
+            
+        serializer.validated_data['is_active'] = True
         self.perform_create(serializer)
         return Response(
             {"status": "success", "message": "Your account has been registered successfully!", "data": serializer.data},
