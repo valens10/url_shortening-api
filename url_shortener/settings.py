@@ -126,7 +126,7 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOW_ALL_ORIGINS = True
 
 
-
+BSE_Url = 'http://localhost:8000'
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
