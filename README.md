@@ -110,4 +110,20 @@ The API documentation is available at:
 - Configure a WSGI server (Gunicorn/Uvicorn) for serving the app
 
 ## Contributing
+![image](https://github.com/user-attachments/assets/0260ed43-bcd6-49aa-87b1-796583ff7804)
+
+![image](https://github.com/user-attachments/assets/84e59b67-c35e-4e88-b08f-8b677b384cb4)
+
+![image](https://github.com/user-attachments/assets/24d35536-6512-4e95-bb80-a90703706b1a)
+
+![image](https://github.com/user-attachments/assets/db84efa4-4781-4717-878d-ecde78403af0)
+
+![image](https://github.com/user-attachments/assets/02902b00-bbaf-4b6d-9211-98942d73380e)
+
+![image](https://github.com/user-attachments/assets/cbb59e4a-cc7e-4702-bd13-e357bbcc7cdd)
+
+
+
+
+## Contributing
 Feel free to open issues or submit PRs for improvements.
