@@ -1,0 +1,27 @@
+version: '3.9'
+
+services:
+  web:
+    build:
+      context: .
+    container_name: url_shortener_app
+    entrypoint: >
+      sh -c "python manage.py migrate &&
+             python manage.py collectstatic --noinput &&
+             gunicorn url_shortener.wsgi:application --bind 0.0.0.0:8000 --timeout 120 --workers 3"
+    volumes:
+      - .:/usr/src/app
+      - static_volume:/usr/src/app/static
+    ports:
+      - "8001:8000"
+    env_file:
+      - .env
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8000/ || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  static_volume:

@@ -43,7 +43,9 @@ pip install -r requirements.txt
 Create a `.env` file in the project root and set the necessary environment variables:
 ```env
 DJANGO_DEBUG=True
-DATABASE_URL='postgres://DB_USER:DB_PASSWORD@[DB_HOST]:[DB_PORT]/db_shorten_url'
+DATABASE_URL='postgres://DB_USER:DB_PASSWORD@[DB_HOST]:[DB_PORT]/DB_NAME'
+#DATABASE_URL='postgres://DB_USER:DB_PASSWORD@host.docker.internal:DB_PORT/DB_NAME'
+
 
 ```
 
