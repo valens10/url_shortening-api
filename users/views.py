@@ -42,13 +42,13 @@ class UserRegisterViewset(GenericAPIView, CreateModelMixin):
         serializer = self.get_serializer(data=request.data)
         if not serializer.is_valid():
             return Response(
-                {"status": "error", "message": "User registration failed. Please correct the errors and try again.", "errors": serializer.errors},
+                {"status": "error", "message": "Account registration failed. Please correct the errors and try again.", "errors": serializer.errors},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
         self.perform_create(serializer)
         return Response(
-            {"status": "success", "message": "User registered successfully!", "data": serializer.data},
+            {"status": "success", "message": "Your account has been registered successfully!", "data": serializer.data},
             status=status.HTTP_201_CREATED
         )
 
@@ -199,3 +199,54 @@ def logout(request):
 
     Token.objects.filter(user=request.user).delete()
     return Response({"detail": "Signed out"}, status=200)
+
+
+@swagger_auto_schema(
+    method='get',
+    operation_description="Refresh the user's token.",
+    responses={
+        200: openapi.Response(
+            description="Token refreshed successfully.",
+            schema=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'status': openapi.Schema(type=openapi.TYPE_STRING),
+                    'message': openapi.Schema(type=openapi.TYPE_STRING),
+                    'data': openapi.Schema(
+                        type=openapi.TYPE_OBJECT,
+                        properties={
+                            'id': openapi.Schema(type=openapi.TYPE_INTEGER),
+                            'username': openapi.Schema(type=openapi.TYPE_STRING),
+                            'email': openapi.Schema(type=openapi.TYPE_STRING),
+                            'token': openapi.Schema(type=openapi.TYPE_STRING),
+                        }
+                    ),
+                }
+            )
+        ),
+        401: 'Unauthorized',
+    }
+)
+@api_view(['GET'])
+def refresh_token(request):
+    """
+    Refresh the token for the authenticated user.
+    """
+    permission_classes = [IsAuthenticated]
+    
+    # Get the current user from the request
+    user = request.user
+
+    # Serialize user data
+    data = UserSerializer(user).data
+
+    # Get or create token
+    token, _ = Token.objects.get_or_create(user=user)
+    data["token"] = token.key
+
+    # Respond with the new token
+    return Response({
+        "status": "success",
+        "message": "Token refreshed successfully.",
+        'data': data
+    }, status=status.HTTP_200_OK)
