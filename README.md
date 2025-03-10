@@ -53,6 +53,7 @@ DATABASE_URL='postgres://DB_USER:DB_PASSWORD@[DB_HOST]:[DB_PORT]/DB_NAME'
 ```bash
 python manage.py migrate
 python manage.py runserver
+python manage.py test # on windows use py .\manage.py test
 ```
 
 The API will be available at `http://127.0.0.1:8000/`
@@ -122,6 +123,7 @@ The API documentation is available at:
 
 ![image](https://github.com/user-attachments/assets/cbb59e4a-cc7e-4702-bd13-e357bbcc7cdd)
 
+![image](https://github.com/user-attachments/assets/f38facee-5438-48f2-bf44-f89d5a87bef1)
 
 
 
