@@ -43,16 +43,19 @@ pip install -r requirements.txt
 Create a `.env` file in the project root and set the necessary environment variables:
 ```env
 DJANGO_DEBUG=True
-DATABASE_URL='postgres://DB_USER:DB_PASSWORD@[DB_HOST]:[DB_PORT]/DB_NAME'
-#DATABASE_URL='postgres://DB_USER:DB_PASSWORD@host.docker.internal:DB_PORT/DB_NAME'
-
+DATABASE_URL='postgres://[DB_USER]:[DB_PASSWORD]@[DB_HOST]:[DB_PORT]/[DB_NAME]'
+#DATABASE_URL='postgres://[DB_USER]:[DB_PASSWORD]@host.docker.internal:[DB_PORT]/[DB_NAME]'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY='69382xxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET='GOxxxxxxxxxxxxxxxxxxxO4ssQ4'
+SOCIAL_AUTH_GITHUB_KEY='Ov2xxxxxxxxxxxxxxxxxdCamGp'
+SOCIAL_AUTH_GITHUB_SECRET='fe25975xxxxxxxxxxxxxxxxx049d7862f7088'
 
 ```
 
 ### Apply Migrations & Start Server
 ```bash
 python manage.py migrate
-python manage.py runserver
+python manage.py runserver # py .\manage.py runserver on windows
 ```
 
 The API will be available at `http://127.0.0.1:8000/`
@@ -69,6 +72,21 @@ docker-compose up --build
 ```bash
 docker-compose down
 ```
+
+#### Google Login:
+1. Go to the [Google Developer Console](https://console.cloud.google.com/).
+2. Create a new OAuth 2.0 Client ID.
+3. Set the **Authorized redirect URIs** to:
+   - `http://localhost:8000/social/complete/google-oauth2/`
+4. Copy the **Client ID** and **Client Secret** into `.env`.
+
+#### GitHub Login:
+1. Go to the [GitHub Developer Console](https://github.com/settings/applications).
+2. Create a new OAuth application.
+3. Set the **Authorization callback URL** to:
+   - `http://localhost:8000/social/complete/github/`
+4. Copy the **Client ID** and **Client Secret** into `.env`.
+
 
 ## API Endpoints
 
@@ -87,11 +105,6 @@ docker-compose down
 | GET | `/api/urls` | Retrieve user-specific URLs |
 | GET | `/api/analytics/<shortUrl>` | Retrieve analytics for a shortened URL |
 | GET | `/api/redirect_url/<shortUrl>` | Redirect to the original URL |
-
-### User Management Endpoints
-| Method | Endpoint | Description |
-|--------|---------|-------------|
-| GET | `/auth/user_details/<pk>` | Retrieve user details |
 
 ## API Documentation
 The API documentation is available at:

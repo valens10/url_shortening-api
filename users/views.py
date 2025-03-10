@@ -13,6 +13,7 @@ from rest_framework import status
 from .serializers import UserSerializer
 from .models import CustomUser as User
 
+
 class UserRegisterViewset(GenericAPIView, CreateModelMixin):
     serializer_class = UserSerializer
     queryset = User.objects.all()
@@ -204,6 +205,32 @@ def logout(request):
 
 @swagger_auto_schema(
     method='get',
+    operation_description="Fetch the authenticated user's data.",
+    responses={
+        200: openapi.Response(description="Data successfully fetched."),
+        401: openapi.Response(description="You are not allowed to perform this operation."),
+    },
+)
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_data(request):
+    """
+    Retrieve authenticated user data.
+    
+    Returns the details of the currently authenticated user.
+    
+    **Permissions:**
+    - Requires authentication
+    """
+    try:
+        user = request.user
+        user_data = UserSerializer(user).data
+        return Response({"status": "success", "message": "Data successfully fetched.", "data": user_data}, status=200)
+    except Exception as e:
+        return Response({"status": "error", "message": "An error occurred: " + str(e)}, status=500)
+
+@swagger_auto_schema(
+    method='get',
     operation_description="Refresh the user's token.",
     responses={
         200: openapi.Response(
@@ -229,16 +256,13 @@ def logout(request):
     }
 )
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def refresh_token(request):
     """
     Refresh the token for the authenticated user.
     """
-    permission_classes = [IsAuthenticated]
-    
     # Get the current user from the request
     user = request.user
-
-    # Serialize user data
     data = UserSerializer(user).data
 
     # Get or create token

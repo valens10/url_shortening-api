@@ -5,6 +5,7 @@ from django.db import models
 from django.db import models
 from django.core.exceptions import ValidationError
 import uuid
+from rest_framework.authtoken.models import Token
 
 
 # Create your models here.
