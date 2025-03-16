@@ -42,8 +42,12 @@ class UserRegisterViewset(GenericAPIView, CreateModelMixin):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if not serializer.is_valid():
+            
+            error_message = ''
+            for field, messages in serializer.errors.items():
+                error_message += f'{", ".join(messages)} '
             return Response(
-                {"status": "error", "message": "Account registration failed. Please correct the errors and try again.", "errors": serializer.errors},
+                {"status": "error", "message": error_message, "errors": serializer.errors},
                 status=status.HTTP_400_BAD_REQUEST
             )
             

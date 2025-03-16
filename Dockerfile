@@ -18,14 +18,14 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the Django project files
 COPY . .
 
-# Ensure correct permissions
+# Ensure correct permissions for media files
 RUN chmod -R 777 /usr/src/app/media
-
-# Expose port 8000
-EXPOSE 8000
 
 # Collect static files
 RUN python manage.py collectstatic --noinput
 
+# Expose port 8000 for Gunicorn
+EXPOSE 8000
+
 # Run the application
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "url_shortener.wsgi:application"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers=3", "--timeout=120", "url_shortener.wsgi:application"]

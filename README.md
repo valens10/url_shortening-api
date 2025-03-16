@@ -59,7 +59,7 @@ python manage.py runserver
 python manage.py test # on windows use py .\manage.py test
 ```
 
-The API will be available at `http://127.0.0.1:8000/`
+The API will be available at `http://127.0.0.1:8001/`
 
 ## Running with Docker
 To run the backend using Docker, follow these steps:
@@ -109,7 +109,7 @@ docker-compose down
 
 ## API Documentation
 The API documentation is available at:
-- **Swagger UI:** `http://127.0.0.1:8000/doc/`
+- **Swagger UI:** `http://127.0.0.1:8001/doc/`
 
 ## Security Features
 - **Token Authentication (`rest_framework.authtoken`)** for secure access

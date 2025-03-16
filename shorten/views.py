@@ -125,6 +125,59 @@ def get_user_urls(request):
         return Response({"status": "error", "message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 
+
+@swagger_auto_schema(
+    methods=['DELETE'],
+    operation_description="Delete a shortened URL for the authenticated user.",
+    responses={
+        200: openapi.Response(
+            description="URL was successfully deleted.",
+            schema=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'status': openapi.Schema(type=openapi.TYPE_STRING, example="success"),
+                    'message': openapi.Schema(type=openapi.TYPE_STRING, example="Your url has been deleted successful"),
+                    'data': openapi.Schema(type=openapi.TYPE_OBJECT, example={})
+                }
+            )
+        ),
+        404: openapi.Response(
+            description="URL not found.",
+            schema=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'status': openapi.Schema(type=openapi.TYPE_STRING, example="error"),
+                    'message': openapi.Schema(type=openapi.TYPE_STRING, example="URL not found.")
+                }
+            )
+        ),
+        500: openapi.Response(
+            description="An internal error occurred.",
+            schema=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'status': openapi.Schema(type=openapi.TYPE_STRING, example="error"),
+                    'message': openapi.Schema(type=openapi.TYPE_STRING, example="An unexpected error occurred.")
+                }
+            )
+        )
+    }
+)
+@api_view(['DELETE'])
+def delete_url(request, url_id):
+    """
+    Fetch all shortened URLs for the authenticated user.
+    """
+    try:
+        url = URL.objects.get(user=request.user, pk=url_id)
+        url.delete()
+        return Response({"status": "success", "message": "Your url has been deleted successful", "data": {}}, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({"status": "error", "message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+
+
 @swagger_auto_schema(
     methods=['GET'], 
     operation_description="Fetch analytics for a specific shortened URL.",
