@@ -30,12 +30,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
+DEBUG = os.getenv("DEBUG", "False") == "True"
 
 BASE_URL = os.getenv("BASE_URL")
 FRONTEND_URL = os.getenv("FRONTEND_URL")
+
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", *BASE_URL.split(","), *FRONTEND_URL.split(",")]
 
 # Application definition
 
@@ -165,8 +165,8 @@ REST_FRAMEWORK = {
 # CORS settings
 CORS_ALLOW_ALL_ORIGINS = False  # False for better security
 CORS_ALLOWED_ORIGINS = [
-    FRONTEND_URL,
-    BASE_URL,
+    *BASE_URL.split(","),
+    *FRONTEND_URL.split(","),
 ]
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_METHODS = [
@@ -190,9 +190,10 @@ CORS_ALLOW_HEADERS = [
 
 # CSRF settings
 CSRF_TRUSTED_ORIGINS = [
-    FRONTEND_URL,
-    BASE_URL,
+    *BASE_URL.split(","),
+    *FRONTEND_URL.split(","),
 ]
+
 CSRF_COOKIE_SECURE = True  # Only send cookie over HTTPS
 CSRF_COOKIE_HTTPONLY = True  # Prevent JavaScript access to CSRF cookie
 CSRF_COOKIE_SAMESITE = "Lax"  # Protect against CSRF attacks
