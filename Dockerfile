@@ -4,6 +4,7 @@ FROM python:3.10-slim
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
+ENV SECRET_KEY="django-insecure-temporary-key-for-build-only"
 
 # Set working directory
 WORKDIR /usr/src/app
@@ -18,8 +19,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the Django project files
 COPY . .
 
-# Ensure correct permissions for media files
-RUN chmod -R 777 /usr/src/app/media
+# Create media directory and set permissions
+RUN mkdir -p /usr/src/app/media && chmod -R 777 /usr/src/app/media
 
 # Collect static files
 RUN python manage.py collectstatic --noinput
