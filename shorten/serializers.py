@@ -6,6 +6,8 @@ import re
 
 
 class URLSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+
     def validate_long_url(self, value):
         # Remove any whitespace
         value = value.strip()
