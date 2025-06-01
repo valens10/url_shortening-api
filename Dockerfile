@@ -25,12 +25,8 @@ RUN mkdir -p /usr/src/app/media && chmod -R 777 /usr/src/app/media
 # Collect static files
 RUN python manage.py collectstatic --noinput
 
-# Create a script to run migrations and start the server
-RUN echo '#!/bin/bash\npython manage.py migrate\nexec gunicorn --bind 0.0.0.0:8000 --workers=3 --timeout=120 url_shortener.wsgi:application' > /usr/src/app/start.sh
-RUN chmod +x /usr/src/app/start.sh
-
 # Expose port 8000 for Gunicorn
 EXPOSE 8000
 
-# Run the start script
-CMD ["/usr/src/app/start.sh"]
+# Run the application
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers=3", "--timeout=120", "url_shortener.wsgi:application"]
