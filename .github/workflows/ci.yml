@@ -23,7 +23,13 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11.3'
+          python-version: '3.11'
+
+      - name: Check Python version
+        run: python --version
+
+      - name: Clear pip cache
+        run: pip cache purge || true
 
       - name: Install dependencies
         run: |
