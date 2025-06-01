@@ -87,13 +87,20 @@ jobs:
         cache-to: type=gha,mode=max
 
   deploy:
-    needs: build-and-push
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
-    
-    steps:
+  needs: build-and-push
+  runs-on: ubuntu-latest
+  if: github.ref == 'refs/heads/master'
+
+  steps:
     - name: Deploy to Render
-      uses: render/deploy-action@v1
+      uses: JorgeLNJunior/deploy-to-render@v1.4.5
       with:
         service-id: ${{ secrets.RENDER_SERVICE_ID }}
         api-key: ${{ secrets.RENDER_API_KEY }}
+        wait-for-success: true
+        image: ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
+        image-tag: ${{ env.DOCKER_TAG }}
+        version: ${{ env.DOCKER_TAG }}
+        image: ${{ env.DOCKER_IMAGE }}:latest
+        image-tag: latest
+        version: latest
