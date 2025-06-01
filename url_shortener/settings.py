@@ -35,7 +35,7 @@ DEBUG = os.getenv("DEBUG", "False") == "True"
 BASE_URL = os.getenv("BASE_URL")
 FRONTEND_URL = os.getenv("FRONTEND_URL")
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", *BASE_URL.split(","), *FRONTEND_URL.split(",")]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", BASE_URL, FRONTEND_URL]
 
 # Application definition
 
@@ -165,8 +165,10 @@ REST_FRAMEWORK = {
 # CORS settings
 CORS_ALLOW_ALL_ORIGINS = False  # False for better security
 CORS_ALLOWED_ORIGINS = [
-    *BASE_URL.split(","),
-    *FRONTEND_URL.split(","),
+    "http://localhost:4200",
+    "http://127.0.0.1:4200",
+    BASE_URL,
+    FRONTEND_URL,
 ]
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_METHODS = [
@@ -190,8 +192,10 @@ CORS_ALLOW_HEADERS = [
 
 # CSRF settings
 CSRF_TRUSTED_ORIGINS = [
-    *BASE_URL.split(","),
-    *FRONTEND_URL.split(","),
+    "http://localhost:4200",
+    "http://127.0.0.1:4200",
+    BASE_URL,
+    FRONTEND_URL,
 ]
 
 CSRF_COOKIE_SECURE = True  # Only send cookie over HTTPS
