@@ -5,17 +5,12 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 from django.urls import reverse
 from django.utils import timezone
-import json
 
 
 class URLModelTest(TestCase):
     def setUp(self):
         # Create a sample user for testing
-        self.user = User.objects.create_user(
-            username="testuser",
-            email="testuser@example.com",
-            password="password123"
-        )
+        self.user = User.objects.create_user(username="testuser", email="testuser@example.com", password="password123")
 
     def test_create_url_with_short_code(self):
         """
@@ -75,20 +70,16 @@ class URLModelTest(TestCase):
         """
         Test that URL clicks are properly tracked.
         """
-        url = URL.objects.create(
-            user=self.user,
-            long_url="https://www.example.com",
-            name="test"
-        )
-        
+        url = URL.objects.create(user=self.user, long_url="https://www.example.com", name="test")
+
         # Initial clicks should be 0
         self.assertEqual(url.clicks, 0)
-        
+
         # Increment clicks
         url.clicks += 1
         url.clicked_date = timezone.now()
         url.save()
-        
+
         # Check if clicks were updated
         url.refresh_from_db()
         self.assertEqual(url.clicks, 1)
@@ -97,30 +88,14 @@ class URLModelTest(TestCase):
 
 class ClickEventModelTest(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(
-            username="testuser",
-            email="testuser@example.com",
-            password="password123"
-        )
-        self.url = URL.objects.create(
-            user=self.user,
-            long_url="https://www.example.com",
-            name="test"
-        )
+        self.user = User.objects.create_user(username="testuser", email="testuser@example.com", password="password123")
+        self.url = URL.objects.create(user=self.user, long_url="https://www.example.com", name="test")
 
     def test_create_click_event(self):
         """
         Test creating a click event with all fields.
         """
-        click_event = ClickEvent.objects.create(
-            url=self.url,
-            ip_address="192.168.1.1",
-            country="US",
-            city="New York",
-            region="NY",
-            user_agent="Mozilla/5.0",
-            referrer="https://google.com"
-        )
+        click_event = ClickEvent.objects.create(url=self.url, ip_address="192.168.1.1", country="US", city="New York", region="NY", user_agent="Mozilla/5.0", referrer="https://google.com")
 
         self.assertEqual(click_event.url, self.url)
         self.assertEqual(click_event.ip_address, "192.168.1.1")
@@ -135,19 +110,11 @@ class ClickEventModelTest(TestCase):
 class URLAPITest(APITestCase):
     def setUp(self):
         # Create a test user
-        self.user = User.objects.create_user(
-            username="testuser",
-            email="testuser@example.com",
-            password="password123"
-        )
-        
+        self.user = User.objects.create_user(username="testuser", email="testuser@example.com", password="password123")
+
         # Create a test URL
-        self.url = URL.objects.create(
-            user=self.user,
-            long_url="https://www.example.com",
-            name="test"
-        )
-        
+        self.url = URL.objects.create(user=self.user, long_url="https://www.example.com", name="test")
+
         # Login the user
         self.client.force_authenticate(user=self.user)
 
@@ -155,35 +122,28 @@ class URLAPITest(APITestCase):
         """
         Test the URL shortening endpoint.
         """
-        data = {
-            "long_url": "https://www.new-example.com",
-            "name": "new test"
-        }
-        response = self.client.post(reverse('shorten'), data, format='json')
-        
+        data = {"long_url": "https://www.new-example.com", "name": "new test"}
+        response = self.client.post(reverse("shorten"), data, format="json")
+
         if response.status_code != status.HTTP_201_CREATED:
-            print('Response data:', response.data)
+            print("Response data:", response.data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.data['status'], 'success')
-        self.assertIn('data', response.data)
-        self.assertEqual(response.data['data']['long_url'], data['long_url'])
+        self.assertEqual(response.data["status"], "success")
+        self.assertIn("data", response.data)
+        self.assertEqual(response.data["data"]["long_url"], data["long_url"])
 
     def test_get_user_urls(self):
         """
         Test retrieving all URLs for the authenticated user.
         """
         # Create another URL for the same user
-        URL.objects.create(
-            user=self.user,
-            long_url="https://www.another-example.com",
-            name="another test"
-        )
-        
+        URL.objects.create(user=self.user, long_url="https://www.another-example.com", name="another test")
+
         # Get all URLs for the user
-        response = self.client.get(reverse('urls'))
-        
+        response = self.client.get(reverse("urls"))
+
         # Check response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['status'], 'success')
-        self.assertIn('data', response.data)
-        self.assertEqual(len(response.data['data']), 2)  # Should have 2 URLs
+        self.assertEqual(response.data["status"], "success")
+        self.assertIn("data", response.data)
+        self.assertEqual(len(response.data["data"]), 2)  # Should have 2 URLs
