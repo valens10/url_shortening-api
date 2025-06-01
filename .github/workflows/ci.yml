@@ -48,6 +48,7 @@ jobs:
         env:
           DJANGO_SETTINGS_MODULE: url_shortener.settings
           DATABASE_URL: sqlite:///db.sqlite3
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
         run: |
           pytest --cov=. --cov-branch --cov-report=xml
 
