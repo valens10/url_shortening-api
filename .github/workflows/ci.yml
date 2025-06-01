@@ -87,14 +87,20 @@ jobs:
         cache-to: type=gha,mode=max
 
   deploy:
-  needs: build-and-push
-  runs-on: ubuntu-latest
-  if: github.ref == 'refs/heads/master'
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-  steps:
-    - name: Deploy to Render
-      uses: johnbeynon/render-deploy-action@v0.0.8
-      with:
-        service-id: ${{ secrets.RENDER_SERVICE_ID }}
-        api-key: ${{ secrets.RENDER_API_KEY }}
-        wait-for-success: true
+      - name: Deploy to Render
+        uses: johnbeynon/render-deploy-action@v0.0.8
+        env:
+          RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+        with:
+          service-id: ${{ secrets.RENDER_SERVICE_ID }}
+          api-key: ${{ secrets.RENDER_API_KEY }}
+          wait-for-success: true
