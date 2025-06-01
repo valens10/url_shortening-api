@@ -1,15 +1,18 @@
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from rest_framework.authtoken.models import Token
 from rest_framework.generics import GenericAPIView
-from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin
+from rest_framework.mixins import (
+    CreateModelMixin,
+    RetrieveModelMixin,
+    UpdateModelMixin,
+    DestroyModelMixin,
+)
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from django.contrib.auth import get_user_model
 from django.contrib.auth import authenticate
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
 from rest_framework import status
+from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import UserSerializer
 from .models import CustomUser as User
 
@@ -22,41 +25,53 @@ class UserRegisterViewset(GenericAPIView, CreateModelMixin):
         operation_description="Register a new user.",
         request_body=UserSerializer,
         responses={
-            201: openapi.Response(
-                description="User registered successfully!",
-                schema=UserSerializer
-            ),
+            201: openapi.Response(description="User registered successfully!", schema=UserSerializer),
             400: openapi.Response(
                 description="User registration failed.",
                 schema=openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={
-                        'status': openapi.Schema(type=openapi.TYPE_STRING, example="error"),
-                        'message': openapi.Schema(type=openapi.TYPE_STRING, example="User registration failed. Please correct the errors and try again."),
-                        'errors': openapi.Schema(type=openapi.TYPE_OBJECT, additionalProperties=openapi.TYPE_STRING),
-                    }
-                )
+                        "status": openapi.Schema(type=openapi.TYPE_STRING, example="error"),
+                        "message": openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            example="User registration failed. Please correct the errors and try again.",
+                        ),
+                        "errors": openapi.Schema(
+                            type=openapi.TYPE_OBJECT,
+                            additionalProperties=openapi.TYPE_STRING,
+                        ),
+                    },
+                ),
             ),
-        }
+        },
     )
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if not serializer.is_valid():
-            
-            error_message = ''
+
+            error_message = ""
             for field, messages in serializer.errors.items():
                 error_message += f'{", ".join(messages)} '
             return Response(
-                {"status": "error", "message": error_message, "errors": serializer.errors},
-                status=status.HTTP_400_BAD_REQUEST
+                {
+                    "status": "error",
+                    "message": error_message,
+                    "errors": serializer.errors,
+                },
+                status=status.HTTP_400_BAD_REQUEST,
             )
-            
-        serializer.validated_data['is_active'] = True
+
+        serializer.validated_data["is_active"] = True
         self.perform_create(serializer)
         return Response(
-            {"status": "success", "message": "Your account has been registered successfully!", "data": serializer.data},
-            status=status.HTTP_201_CREATED
+            {
+                "status": "success",
+                "message": "Your account has been registered successfully!",
+                "data": serializer.data,
+            },
+            status=status.HTTP_201_CREATED,
         )
+
 
 class UserDetailViewset(GenericAPIView, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin):
     serializer_class = UserSerializer
@@ -70,10 +85,10 @@ class UserDetailViewset(GenericAPIView, RetrieveModelMixin, UpdateModelMixin, De
         responses={
             200: openapi.Response(
                 description="User details retrieved successfully.",
-                schema=UserSerializer()
+                schema=UserSerializer(),
             ),
             401: openapi.Response(description="Authentication credentials were not provided."),
-        }
+        },
     )
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
@@ -84,11 +99,11 @@ class UserDetailViewset(GenericAPIView, RetrieveModelMixin, UpdateModelMixin, De
         responses={
             200: openapi.Response(
                 description="User details updated successfully.",
-                schema=UserSerializer()
+                schema=UserSerializer(),
             ),
             400: openapi.Response(description="Invalid data provided."),
             401: openapi.Response(description="Authentication required."),
-        }
+        },
     )
     def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
@@ -98,24 +113,27 @@ class UserDetailViewset(GenericAPIView, RetrieveModelMixin, UpdateModelMixin, De
         responses={
             204: openapi.Response(description="User deleted successfully."),
             401: openapi.Response(description="Authentication required."),
-        }
+        },
     )
     def delete(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.delete()
         return Response({"detail": "User deleted successfully."}, status=204)
-    
 
 
 @swagger_auto_schema(
-    method='post',
+    method="post",
     operation_description="Authenticate a user with username and password.",
     request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT,
-        required=['username', 'password'],
+        required=["username", "password"],
         properties={
-            'username': openapi.Schema(type=openapi.TYPE_STRING, description="User's username"),
-            'password': openapi.Schema(type=openapi.TYPE_STRING, description="User's password", format="password"),
+            "username": openapi.Schema(type=openapi.TYPE_STRING, description="User's username"),
+            "password": openapi.Schema(
+                type=openapi.TYPE_STRING,
+                description="User's password",
+                format="password",
+            ),
         },
     ),
     responses={
@@ -132,10 +150,17 @@ class UserDetailViewset(GenericAPIView, RetrieveModelMixin, UpdateModelMixin, De
                             "id": openapi.Schema(type=openapi.TYPE_INTEGER, example=1),
                             "username": openapi.Schema(type=openapi.TYPE_STRING, example="johndoe"),
                             "email": openapi.Schema(type=openapi.TYPE_STRING, example="johndoe@example.com"),
-                            "token": openapi.Schema(type=openapi.TYPE_STRING, example="abcd1234xyz"),
-                        }
+                            "token": openapi.Schema(
+                                type=openapi.TYPE_STRING,
+                                example="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+                            ),
+                            "token_refresh": openapi.Schema(
+                                type=openapi.TYPE_STRING,
+                                example="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+                            ),
+                        },
                     ),
-                }
+                },
             ),
         ),
         400: openapi.Response(
@@ -143,14 +168,14 @@ class UserDetailViewset(GenericAPIView, RetrieveModelMixin, UpdateModelMixin, De
             schema=openapi.Schema(
                 type=openapi.TYPE_OBJECT,
                 properties={
-                    'status': openapi.Schema(type=openapi.TYPE_STRING, example="error"),
-                    'message': openapi.Schema(type=openapi.TYPE_STRING, example="Invalid credentials."),
-                }
-            )
+                    "status": openapi.Schema(type=openapi.TYPE_STRING, example="error"),
+                    "message": openapi.Schema(type=openapi.TYPE_STRING, example="Invalid credentials."),
+                },
+            ),
         ),
-    }
+    },
 )
-@api_view(['POST'])
+@api_view(["POST"])
 def login(request):
     """
     Authenticate a user with username and password.
@@ -158,16 +183,21 @@ def login(request):
     username = request.data.get("username")
     password = request.data.get("password")
 
+    print(username, password)
+
     if not username or not password:
-        return Response({
-            "status": "error",
-            "message": "Username and password are required."
-        }, status=400)
+        return Response(
+            {"status": "error", "message": "Username and password are required."},
+            status=400,
+        )
 
     try:
         user = User.objects.filter(username=username, is_active=True).first()
         if not user:
-            return Response({"status": "error", "message": "Invalid username or inactive account."}, status=400)
+            return Response(
+                {"status": "error", "message": "Invalid username or inactive account."},
+                status=400,
+            )
 
         user = authenticate(username=username, password=password, request=request)
         if not user:
@@ -176,106 +206,87 @@ def login(request):
         # Serialize user data
         data = UserSerializer(user).data
 
-        # Get or create token
-        token, _ = Token.objects.get_or_create(user=user)
-        data["token"] = token.key
+        # Generate JWT tokens
+        refresh = RefreshToken.for_user(user)
+        data["token"] = str(refresh.access_token)
+        data["token_refresh"] = str(refresh)
 
-        return Response({"status": "success", "message": "Authentication successful.", "data": data}, status=200)
+        return Response(
+            {"status": "success", "message": "Login successful.", "data": data},
+            status=200,
+        )
 
     except Exception as e:
         return Response({"status": "error", "message": "An error occurred: " + str(e)}, status=500)
 
 
-
-    
 @swagger_auto_schema(
-    method='get',
-    operation_description="Logout the authenticated user by deleting their token.",
+    method="post",
+    operation_description="Logout the authenticated user by blacklisting their refresh token.",
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            "refresh_token": openapi.Schema(type=openapi.TYPE_STRING, description="The refresh token to blacklist"),
+        },
+    ),
     responses={
-        200: openapi.Response(description="Signed out successfully."),
-        401: openapi.Response(description="You are not allowed to perform this operation."),
+        200: openapi.Response(description="Successfully logged out."),
+        400: openapi.Response(description="Invalid refresh token."),
+        401: openapi.Response(description="Authentication required."),
     },
 )
-@api_view(['GET'])
+@api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def logout(request):
-    """ Logout an authenticated user and delete their token """
-    if request.user.is_anonymous:
-        return Response({"detail": "You are not allowed to perform this operation"}, status=401)
+    """Logout an authenticated user by blacklisting their refresh token"""
+    try:
+        refresh_token = request.data.get("refresh_token")
+        if not refresh_token:
+            return Response({"detail": "Refresh token is required"}, status=400)
 
-    Token.objects.filter(user=request.user).delete()
-    return Response({"detail": "Signed out"}, status=200)
+        token = RefreshToken(refresh_token)
+        token.blacklist()
+
+        return Response({"detail": "Successfully logged out"}, status=200)
+    except Exception as e:
+        return Response({"detail": str(e)}, status=400)
 
 
 @swagger_auto_schema(
-    method='get',
+    method="get",
     operation_description="Fetch the authenticated user's data.",
     responses={
         200: openapi.Response(description="Data successfully fetched."),
         401: openapi.Response(description="You are not allowed to perform this operation."),
     },
 )
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def get_user_data(request):
     """
     Retrieve authenticated user data.
-    
+
     Returns the details of the currently authenticated user.
-    
+
     **Permissions:**
     - Requires authentication
     """
     try:
         user = request.user
         user_data = UserSerializer(user).data
-        return Response({"status": "success", "message": "Data successfully fetched.", "data": user_data}, status=200)
+
+        # regenerate JWT tokens
+        refresh = RefreshToken.for_user(user)
+        user_data["token"] = str(refresh.access_token)
+        user_data["token_refresh"] = str(refresh)
+
+        return Response(
+            {
+                "status": "success",
+                "message": "Data successfully fetched.",
+                "data": user_data,
+            },
+            status=200,
+        )
     except Exception as e:
         return Response({"status": "error", "message": "An error occurred: " + str(e)}, status=500)
-
-@swagger_auto_schema(
-    method='get',
-    operation_description="Refresh the user's token.",
-    responses={
-        200: openapi.Response(
-            description="Token refreshed successfully.",
-            schema=openapi.Schema(
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    'status': openapi.Schema(type=openapi.TYPE_STRING),
-                    'message': openapi.Schema(type=openapi.TYPE_STRING),
-                    'data': openapi.Schema(
-                        type=openapi.TYPE_OBJECT,
-                        properties={
-                            'id': openapi.Schema(type=openapi.TYPE_INTEGER),
-                            'username': openapi.Schema(type=openapi.TYPE_STRING),
-                            'email': openapi.Schema(type=openapi.TYPE_STRING),
-                            'token': openapi.Schema(type=openapi.TYPE_STRING),
-                        }
-                    ),
-                }
-            )
-        ),
-        401: 'Unauthorized',
-    }
-)
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def refresh_token(request):
-    """
-    Refresh the token for the authenticated user.
-    """
-    # Get the current user from the request
-    user = request.user
-    data = UserSerializer(user).data
-
-    # Get or create token
-    token, _ = Token.objects.get_or_create(user=user)
-    data["token"] = token.key
-
-    # Respond with the new token
-    return Response({
-        "status": "success",
-        "message": "Token refreshed successfully.",
-        'data': data
-    }, status=status.HTTP_200_OK)

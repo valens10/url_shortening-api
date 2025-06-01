@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('shorten', '0001_initial'),
+        ("shorten", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='url',
-            name='clicked_date',
+            model_name="url",
+            name="clicked_date",
             field=models.DateTimeField(blank=True, null=True),
         ),
     ]

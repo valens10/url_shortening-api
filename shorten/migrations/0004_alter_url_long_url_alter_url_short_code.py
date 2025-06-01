@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('shorten', '0003_clickevent'),
+        ("shorten", "0003_clickevent"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='url',
-            name='long_url',
+            model_name="url",
+            name="long_url",
             field=models.TextField(),
         ),
         migrations.AlterField(
-            model_name='url',
-            name='short_code',
+            model_name="url",
+            name="short_code",
             field=models.TextField(blank=True, unique=True),
         ),
     ]
