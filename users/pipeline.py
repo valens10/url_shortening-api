@@ -1,16 +1,16 @@
 # yourapp/pipeline.py
-from rest_framework.authtoken.models import Token
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.http import HttpResponseRedirect
 from url_shortener import settings
 
-def create_auth_token(backend, user, *args, **kwargs):
-    # Ensure the user has a token, create it if it doesn't exist
-    if not hasattr(user, 'auth_token'):
-        Token.objects.create(user=user)
 
-    # Get the token
-    token = user.auth_token.key
+def create_auth_token(backend, user, *args, **kwargs):
+    # Generate JWT tokens
+    refresh = RefreshToken.for_user(user)
+
+    # Get the access token
+    access_token = str(refresh.access_token)
 
     # Redirect to frontend with the token as a query parameter
-    frontend_url = f'{settings.LOGIN_SUCCESS_URL}?token={token}'
+    frontend_url = f"{settings.LOGIN_SUCCESS_URL}?token={access_token}"
     return HttpResponseRedirect(frontend_url)

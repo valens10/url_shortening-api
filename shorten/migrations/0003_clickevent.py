@@ -7,20 +7,35 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('shorten', '0002_url_clicked_date'),
+        ("shorten", "0002_url_clicked_date"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='ClickEvent',
+            name="ClickEvent",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('clicked_at', models.DateTimeField(auto_now_add=True)),
-                ('url', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='clicks_data', to='shorten.url')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("clicked_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "url",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="clicks_data",
+                        to="shorten.url",
+                    ),
+                ),
             ],
             options={
-                'db_table': 'tb_url_analytics',
-                'default_permissions': (),
+                "db_table": "tb_url_analytics",
+                "default_permissions": (),
             },
         ),
     ]

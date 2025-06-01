@@ -5,11 +5,21 @@ from .models import CustomUser as User
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "username", "email", "first_name", "last_name", "address", "gender", "is_active", "date_joined", "password"]
+        fields = [
+            "id",
+            "username",
+            "email",
+            "first_name",
+            "last_name",
+            "address",
+            "gender",
+            "is_active",
+            "date_joined",
+            "password",
+        ]
         extra_kwargs = {
             "password": {"write_only": True, "required": True},
         }
-
 
     def create(self, validated_data):
         """Create user with hashed password"""
