@@ -165,7 +165,8 @@ REST_FRAMEWORK = {
 # CORS settings
 CORS_ALLOW_ALL_ORIGINS = False  # False for better security
 CORS_ALLOWED_ORIGINS = [
-    f"{FRONTEND_URL}",  # Your frontend URL
+    FRONTEND_URL,
+    BASE_URL,
 ]
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_METHODS = [
@@ -189,7 +190,8 @@ CORS_ALLOW_HEADERS = [
 
 # CSRF settings
 CSRF_TRUSTED_ORIGINS = [
-    f"{FRONTEND_URL}",  # Frontend URL
+    FRONTEND_URL,
+    BASE_URL,
 ]
 CSRF_COOKIE_SECURE = True  # Only send cookie over HTTPS
 CSRF_COOKIE_HTTPONLY = True  # Prevent JavaScript access to CSRF cookie
