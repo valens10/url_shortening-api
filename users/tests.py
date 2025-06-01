@@ -6,7 +6,6 @@ from django.core.exceptions import ValidationError
 from rest_framework.test import APITestCase
 from rest_framework import status
 from django.contrib.auth import get_user_model
-from rest_framework.authtoken.models import Token
 
 
 class CustomUserModelTest(TestCase):
@@ -15,11 +14,11 @@ class CustomUserModelTest(TestCase):
         Create a sample user for testing.
         """
         self.user = CustomUser.objects.create_user(
-            username='testuser', 
-            email='testuser@example.com', 
-            first_name='John', 
-            last_name='Doe', 
-            password='password123'
+            username="testuser",
+            email="testuser@example.com",
+            first_name="John",
+            last_name="Doe",
+            password="password123",
         )
 
     def test_create_user_with_valid_data(self):
@@ -27,11 +26,11 @@ class CustomUserModelTest(TestCase):
         Test that a user is created with valid data.
         """
         self.assertIsInstance(self.user, CustomUser)
-        self.assertEqual(self.user.username, 'testuser')
-        self.assertEqual(self.user.email, 'testuser@example.com')
-        self.assertEqual(self.user.first_name, 'John')
-        self.assertEqual(self.user.last_name, 'Doe')
-        self.assertTrue(self.user.check_password('password123'))
+        self.assertEqual(self.user.username, "testuser")
+        self.assertEqual(self.user.email, "testuser@example.com")
+        self.assertEqual(self.user.first_name, "John")
+        self.assertEqual(self.user.last_name, "Doe")
+        self.assertTrue(self.user.check_password("password123"))
         self.assertTrue(self.user.is_active)
         self.assertFalse(self.user.is_staff)
 
@@ -47,11 +46,11 @@ class CustomUserModelTest(TestCase):
         """
         with self.assertRaises(Exception):  # Check if creating a duplicate email raises an exception
             CustomUser.objects.create_user(
-                username='anotheruser',
-                email='testuser@example.com',
-                first_name='Jane',
-                last_name='Doe',
-                password='password123'
+                username="anotheruser",
+                email="testuser@example.com",
+                first_name="Jane",
+                last_name="Doe",
+                password="password123",
             )
 
     def test_user_unique_username(self):
@@ -60,11 +59,11 @@ class CustomUserModelTest(TestCase):
         """
         with self.assertRaises(Exception):  # Check if creating a duplicate username raises an exception
             CustomUser.objects.create_user(
-                username='testuser', 
-                email='anotheruser@example.com', 
-                first_name='Jane', 
-                last_name='Doe', 
-                password='password123'
+                username="testuser",
+                email="anotheruser@example.com",
+                first_name="Jane",
+                last_name="Doe",
+                password="password123",
             )
 
     def test_user_gender_choices(self):
@@ -72,40 +71,41 @@ class CustomUserModelTest(TestCase):
         Test that the gender field can only take predefined values.
         """
         user_male = CustomUser.objects.create_user(
-            username='maleuser',
-            email='maleuser@example.com',
-            first_name='John',
-            last_name='Doe',
-            password='password123',
-            gender='MALE'
+            username="maleuser",
+            email="maleuser@example.com",
+            first_name="John",
+            last_name="Doe",
+            password="password123",
+            gender="MALE",
         )
         user_female = CustomUser.objects.create_user(
-            username='femaleuser',
-            email='femaleuser@example.com',
-            first_name='Jane',
-            last_name='Doe',
-            password='password123',
-            gender='FEMALE'
+            username="femaleuser",
+            email="femaleuser@example.com",
+            first_name="Jane",
+            last_name="Doe",
+            password="password123",
+            gender="FEMALE",
         )
-        self.assertEqual(user_male.gender, 'MALE')
-        self.assertEqual(user_female.gender, 'FEMALE')
+        self.assertEqual(user_male.gender, "MALE")
+        self.assertEqual(user_female.gender, "FEMALE")
 
         # Create a user with an invalid gender to trigger validation error
         invalid_user = CustomUser(
-            username='invaliduser',
-            email='invaliduser@example.com',
-            first_name='Invalid',
-            last_name='User',
-            password='password123',
-            gender='OTHER'  # Invalid gender
+            username="invaliduser",
+            email="invaliduser@example.com",
+            first_name="Invalid",
+            last_name="User",
+            password="password123",
+            gender="OTHER",  # Invalid gender
         )
 
         # The following line manually triggers model validation
         with self.assertRaises(ValidationError):
             invalid_user.full_clean()  # This will call the clean method
-            
+
+
 class UserLoginTest(APITestCase):
-    
+
     def setUp(self):
         """
         Create a user for testing login functionality.
@@ -117,14 +117,11 @@ class UserLoginTest(APITestCase):
             password=self.password,
             email="testuser@example.com",
             first_name="Test",
-            last_name="User"
+            last_name="User",
         )
         # Create a valid payload for login
-        self.login_data = {
-            "username": self.username,
-            "password": self.password
-        }
-    
+        self.login_data = {"username": self.username, "password": self.password}
+
     def test_login_success(self):
         """
         Test a successful login with valid credentials.
@@ -138,10 +135,7 @@ class UserLoginTest(APITestCase):
         """
         Test login with invalid credentials (wrong password).
         """
-        invalid_data = {
-            "username": self.username,
-            "password": "wrongpassword"
-        }
+        invalid_data = {"username": self.username, "password": "wrongpassword"}
         response = self.client.post("/auth/login", invalid_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data["status"], "error")
@@ -152,18 +146,14 @@ class UserLoginTest(APITestCase):
         Test login with missing fields (either username or password).
         """
         # Missing password
-        invalid_data = {
-            "username": self.username
-        }
+        invalid_data = {"username": self.username}
         response = self.client.post("/auth/login", invalid_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data["status"], "error")
         self.assertEqual(response.data["message"], "Username and password are required.")
 
         # Missing username
-        invalid_data = {
-            "password": self.password
-        }
+        invalid_data = {"password": self.password}
         response = self.client.post("/auth/login", invalid_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data["status"], "error")
@@ -181,4 +171,3 @@ class UserLoginTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data["status"], "error")
         self.assertEqual(response.data["message"], "Invalid username or inactive account.")
-

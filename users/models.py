@@ -1,11 +1,8 @@
-from enum import unique
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from .user_manager.custom_manager import CustomUserManager
 from django.db import models
-from django.db import models
 from django.core.exceptions import ValidationError
 import uuid
-from rest_framework.authtoken.models import Token
 
 
 # Create your models here.
@@ -20,18 +17,19 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now=True, auto_now_add=False, blank=True, null=True)
     genders = [
-        ('MALE', 'MALE'),
-        ('FEMALE', 'FEMALE'),
+        ("MALE", "MALE"),
+        ("FEMALE", "FEMALE"),
     ]
     gender = models.CharField(max_length=30, choices=genders, null=True, blank=True)
-    
-    USERNAME_FIELD = 'username'
+
+    USERNAME_FIELD = "username"
+    REQUIRED_FIELDS = ["email", "first_name", "last_name"]
     objects = CustomUserManager()
 
     class Meta:
-        db_table = 'tb_users'
+        db_table = "tb_users"
         default_permissions = ()
-        
+
     def clean(self):
         # Validate gender if it's set and not one of the allowed choices
         if self.gender not in dict(self.genders):

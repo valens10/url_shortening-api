@@ -1,0 +1,7 @@
+[flake8]
+max-line-length = 189
+exclude = .git,__pycache__,build,dist,migrations,venv,url_shortener/media,url_shortener/staticfiles,venv/*,../venv/*
+per-file-ignores =
+    __init__.py: F401
+    migrations/*: F401
+ignore = E203, W503
