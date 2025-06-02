@@ -6,7 +6,6 @@ class CustomUserManager(BaseUserManager):
         if not username:
             raise ValueError("Username is required")
         if not email:
-            # If email is not provided, provide a default email
             email = f"{username}@github.com"
 
         email = self.normalize_email(email)

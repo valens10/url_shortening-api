@@ -38,6 +38,7 @@ static/*
 !static/.gitkeep
 staticfiles/*
 !staticfiles/.gitkeep
+coverage.xml
 
 # IDE
 .idea/
