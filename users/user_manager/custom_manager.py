@@ -6,7 +6,7 @@ class CustomUserManager(BaseUserManager):
         if not username:
             raise ValueError("Username is required")
         if not email:
-            raise ValueError("Email is required")
+            email = f"{username}@github.com"
 
         email = self.normalize_email(email)
         user = self.model(username=username, email=email, **extra_fields)
