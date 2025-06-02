@@ -29,7 +29,7 @@ services:
       dockerfile: nginx.dockerfile
     container_name: nginx_server
     ports:
-      - "8001:80" # Serve Nginx on port 8001
+      - "8000:80" # Serve Nginx on port 8000
     depends_on:
       - web
     volumes:
