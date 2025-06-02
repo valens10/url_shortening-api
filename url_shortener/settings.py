@@ -30,12 +30,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG", "False") == "True"
+DEBUG = os.getenv("DJANGO_DEBUG", "False") == "True"
 
 BASE_URL = os.getenv("BASE_URL")
 FRONTEND_URL = os.getenv("FRONTEND_URL")
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", BASE_URL, FRONTEND_URL]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", 'url-shortening-api-dnof.onrender.com', BASE_URL, FRONTEND_URL]
 
 # Application definition
 
@@ -167,6 +167,10 @@ CORS_ALLOW_ALL_ORIGINS = False  # False for better security
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:4200",
     "http://127.0.0.1:4200",
+    "http://127.0.0.1:8000",
+    "http://localhost:8000",
+    "http://127.0.0.1",
+    "http://localhost",
     BASE_URL,
     FRONTEND_URL,
 ]
@@ -194,6 +198,10 @@ CORS_ALLOW_HEADERS = [
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:4200",
     "http://127.0.0.1:4200",
+    "http://127.0.0.1:8000",
+    "http://localhost:8000",
+    "http://127.0.0.1",
+    "http://localhost",
     BASE_URL,
     FRONTEND_URL,
 ]
